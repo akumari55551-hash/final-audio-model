@@ -1,0 +1,51 @@
+# Python environments and bytecode
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local secrets and environment
+.env
+.env.*
+!.env.example
+configs/risk_calibration.json
+
+# Audio, datasets, features, and private manifests
+/data/raw/**
+!/data/raw/.gitkeep
+/data/processed/**
+!/data/processed/.gitkeep
+/data/manifests/**
+!/data/manifests/.gitkeep
+*.wav
+*.flac
+*.mp3
+*.ogg
+*.m4a
+
+# Model weights and experiment outputs
+/checkpoints/**
+!/checkpoints/.gitkeep
+/reports/**
+!/reports/.gitkeep
+!/reports/EVALUATION.md
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Frontend dependencies and generated output
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Editors and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

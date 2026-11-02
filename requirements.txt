@@ -1,0 +1,29 @@
+# Python 3.12 / Windows project dependency pins.
+# RTX 3050 environment observed: NVIDIA driver 576.93; CUDA 12.8 PyTorch wheel.
+# PyTorch wheels bundle their CUDA runtime; a separate CUDA Toolkit install is
+# not normally needed for PyTorch training/inference.
+# Keep torch pinned to the official CUDA build; do not install torchaudio unless
+# needed, and if added later pin its version to the exact matching torch release.
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+torch==2.11.0+cu128
+
+# Audio and data science
+numpy==2.5.4
+scipy==1.18.1
+librosa==0.11.0
+soundfile==0.14.0
+scikit-learn==1.9.1
+sounddevice==0.5.6
+
+# API and configuration
+fastapi==0.161.1
+uvicorn[standard]==0.54.0
+websockets==15.0.1
+pydantic==2.14.1
+PyYAML==6.0.3
+
+# Development and testing
+pytest==8.4.2
+httpx==0.28.1
+ruff==0.17.2
