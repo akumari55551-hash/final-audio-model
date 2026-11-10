@@ -22,10 +22,26 @@ configs/risk_calibration.json
 /data/manifests/**
 !/data/manifests/.gitkeep
 *.wav
+*.wave
 *.flac
 *.mp3
 *.ogg
 *.m4a
+*.aiff
+*.aif
+*.wma
+*.mp4
+*.m4v
+*.mkv
+*.mov
+*.avi
+*.webm
+*.mpeg
+*.mpg
+*.wmv
+
+# Local podcast registry, permission records, media, clips, and derived outputs
+/PodcastDataset/
 
 # Model weights and experiment outputs
 /checkpoints/**

@@ -259,3 +259,15 @@ Edit `training.train_manifest`, `training.dev_manifest`, batch size, epoch count
 - ASVspoof 2019 LA is the primary benchmark and WaveFake the secondary external benchmark; dataset access and terms must be completed by the user. Latency, deployment topology, authentication, and retention policy still need decisions. Baseline audio settings in `configs/baseline.yaml` are starting points, not validated requirements.
 - The frontend is intended to run locally during development. Production microphone access requires HTTPS (except localhost), explicit browser permission, and a security-reviewed deployment.
 - This scaffold creates no model, makes no detection claims, and is not ready to protect a real workflow until training, independent evaluation, security review, and operational testing are complete.
+
+## Safe local podcast processing
+
+Use the unified pipeline from the repository root after placing authorized media files locally. Supply an explicit `SOURCE_ID=PATH` mapping for each recording; YouTube URLs are never downloaded or treated as files. The pipeline preserves source recordings, diarizes each complete recording before making 10-second mono 16 kHz PCM WAV clips, aligns speaker turns into clip metadata, and updates the processing manifest only after processing succeeds. Existing outputs are never overwritten; a rerun skips sources already marked processed.
+
+```powershell
+.\.venv\Scripts\python.exe process_podcast_dataset.py `
+	--media "P001=PodcastDataset/originals/P001/authorized-recording.mp4" `
+	--media "P002=PodcastDataset/originals/P002/authorized-recording.wav"
+```
+
+FFmpeg is discovered in this order: `--ffmpeg <path>`, the `FFMPEG_PATH` environment variable, then system `PATH`; its `-version` command is checked before conversion. If FFmpeg is installed but not on `PATH`, set `$env:FFMPEG_PATH = "<full path to ffmpeg.exe>"` in PowerShell, or pass `--ffmpeg "<full path to ffmpeg.exe>"`. If Pyannote needs access to a model not already cached or otherwise accessible, set `HF_TOKEN` in the PowerShell environment. The token is read from the environment only and is never written to project files or printed. Pyannote is used only for speaker diarization. Running without local media prints a per-source `WAITING` report and does not change the manifest or metadata. Outputs are written to the manifest's MP3 and clip paths, with speaker turns under `PodcastDataset/diarization/` and clip QA/alignment in `PodcastDataset/clip_metadata.csv`.
