@@ -21,6 +21,7 @@ pyannote.audio==4.0.7
 
 # API and configuration
 fastapi==0.161.1
+python-multipart==0.0.20
 uvicorn[standard]==0.54.0
 websockets==15.0.1
 pydantic==2.14.1

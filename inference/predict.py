@@ -203,6 +203,7 @@ class LocalVoicePredictor:
                 torch.cuda.synchronize(self.device)
         latency_ms = (time.perf_counter() - start) * 1000.0
         return {
+            "logits": [float(value) for value in logits[0].float().cpu().tolist()],
             "bona_fide_score": float(scores[0]),
             "spoof_score": float(scores[1]),
             "audio_quality": quality.to_dict(),

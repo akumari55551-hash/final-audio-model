@@ -1,6 +1,27 @@
-# AI-Powered Real-Time Detection and Prevention of Voice Cloning Impersonation Attacks
+# A.U.D.I.O — AI-Driven Uncertainty and Detection for Impersonation Overwatch
 
-An initial, privacy-conscious repository for developing and evaluating a locally trained voice anti-spoofing system. The planned detector will be trained from randomly initialized weights using appropriately licensed data; there are no hosted inference APIs or pretrained voice-detection models in this design. **No detector is implemented, trained, evaluated, or claimed to work yet.**
+## Federated Voice Threat Intelligence Platform
+
+## A.U.D.I.O local inference API
+
+Start the FastAPI server from the repository root after installing `requirements.txt` and ensuring FFmpeg/ffprobe are on `PATH`:
+
+```powershell
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
+
+The service loads `checkpoints/user_audio_human_plus_ai/best.pt` once at startup. Override it with `SONARA_CHECKPOINT_PATH`; choose a device with `SONARA_DEVICE` (`auto`, `cpu`, or a CUDA device). `GET /api/health` reports backend and model availability separately. `POST /api/analyze` accepts multipart field `file`, supports M4A/WAV/FLAC/MP3/OGG/AIFF, and enforces a 50 MB limit. It validates and converts the original recording to mono 16 kHz PCM WAV, then invokes `LocalVoicePredictor` using the checkpoint's embedded preprocessing configuration. Temporary source and conversion files are removed after analysis.
+
+For local Vite development, create `frontend/.env.local` with `VITE_API_BASE_URL=http://127.0.0.1:8000`, then run:
+
+```powershell
+cd frontend
+npm run dev
+```
+
+The frontend sends the original file only after the user requests inference. Scores and class results are emitted only when the actual predictor runs. Results are experimental; the development split informed checkpoint selection and there is no independent untouched test split. This API does not persist history or provide a chat endpoint.
+
+This repository contains a locally trained, experimental voice anti-spoofing detector and a local inference API. It does not depend on a hosted inference service or pretrained voice-detection model. The model has no independent untouched test split, so its returned estimates are not independently accuracy-validated and are not proof of identity or fraud.
 
 ## Architecture
 

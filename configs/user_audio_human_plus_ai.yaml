@@ -1,0 +1,94 @@
+project:
+  name: voice-cloning-anti-spoofing
+  seed: 42
+  device: auto
+audio:
+  sample_rate_hz: 16000
+  channels: 1
+  sample_format: float32
+  fixed_window_seconds: 2.0
+  window_hop_seconds: 0.5
+  amplitude_policy: sanitize_and_clip
+  resampler: scipy_resample_poly
+  resampler_window: hann
+  window_seconds: 2.0
+  hop_seconds: 0.5
+  max_stream_seconds: 300
+  retain_raw_audio: false
+features:
+  name: lfcc
+  n_fft: 512
+  win_length: 400
+  hop_length: 160
+  n_filters: 64
+  n_coefficients: 40
+  f_min_hz: 0
+  f_max_hz: 8000
+  preemphasis: 0.97
+  log_energy_floor: 1.0e-10
+  spectrum: power
+  window: hann_periodic
+  center: false
+  normalization: none
+model:
+  architecture: small_cnn
+  initialization: random
+  pretrained_weights: false
+  seed: 42
+  dropout: 0.3
+  input_shape:
+  - batch
+  - 1
+  - n_lfcc
+  - frames
+  classes:
+  - bona_fide
+  - spoof
+training:
+  manifest_path: data/manifests/user_audio_human_plus_ai.csv
+  train_manifest: data/manifests/user_audio_human_plus_ai.csv
+  dev_manifest: data/manifests/user_audio_human_plus_ai.csv
+  preprocessing_config: configs/baseline.yaml
+  epochs: 20
+  batch_size: 8
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  num_workers: 0
+  device: cpu
+  mixed_precision: false
+  deterministic: false
+  imbalance_strategy: weighted_loss
+  validation_window_batch_size: 16
+  early_stopping_patience: 5
+  scheduler:
+    factor: 0.5
+    patience: 2
+    min_lr: 1.0e-06
+  checkpoint_dir: checkpoints/user_audio_human_plus_ai
+  manifest_dir: data/manifests
+  split_strategy: recording_disjoint_speaker_metadata_unavailable
+inference:
+  score_aggregation: exponential_moving_average
+  ema_alpha: 0.3
+  minimum_windows: 3
+  reject_invalid_audio: true
+  discard_audio_after_scoring: true
+risk:
+  history_size: 12
+  minimum_valid_predictions: 3
+  minimum_usable_windows: 3
+  alert_threshold: 0.8
+  high_risk_threshold: 0.95
+  low_risk_threshold: 0.5
+  alert_persistence_windows: 2
+  high_risk_persistence_windows: 3
+  recovery_persistence_windows: 3
+  cooldown_seconds: 15.0
+  smoothing_method: median_then_ema
+  ema_alpha: 0.35
+  correlation_group_seconds: 2.0
+  minimum_audio_quality: ok
+  calibration_path: null
+  threshold_source: uncalibrated_placeholder
+  require_human_confirmation: true
+  prohibit_automated_high_impact_actions: true
